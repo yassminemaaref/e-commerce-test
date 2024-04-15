@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 08 avr. 2024 à 03:32
+-- Généré le : lun. 15 avr. 2024 à 22:10
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.1.17
 
@@ -20,6 +20,43 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `cart`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `cartitem`
+--
+
+CREATE TABLE `cartitem` (
+  `id` int(11) NOT NULL,
+  `cart_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `carts`
+--
+
+CREATE TABLE `carts` (
+  `items` int(11) NOT NULL,
+  `sub_total` decimal(10,2) DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `carts`
+--
+
+INSERT INTO `carts` (`items`, `sub_total`, `created_at`, `updated_at`) VALUES
+(0, 0.00, '2024-04-10 20:28:18', '2024-04-07 22:30:45');
 
 -- --------------------------------------------------------
 
@@ -51,6 +88,20 @@ INSERT INTO `products` (`id`, `name`, `price`, `image`, `category`) VALUES
 --
 
 --
+-- Index pour la table `cartitem`
+--
+ALTER TABLE `cartitem`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cart_id` (`cart_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
+-- Index pour la table `carts`
+--
+ALTER TABLE `carts`
+  ADD PRIMARY KEY (`items`);
+
+--
 -- Index pour la table `products`
 --
 ALTER TABLE `products`
@@ -61,10 +112,33 @@ ALTER TABLE `products`
 --
 
 --
+-- AUTO_INCREMENT pour la table `cartitem`
+--
+ALTER TABLE `cartitem`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `carts`
+--
+ALTER TABLE `carts`
+  MODIFY `items` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT pour la table `products`
 --
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `cartitem`
+--
+ALTER TABLE `cartitem`
+  ADD CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `carts` (`items`),
+  ADD CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
